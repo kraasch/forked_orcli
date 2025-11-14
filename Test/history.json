@@ -1,0 +1,152 @@
+[
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "SourceFile",
+    "expression": "jython:return \"D:\\\\Dokumente\\\\Wikipedia\\\\2025 WikiCon\\\\Upload-Tools\\\\OpenRefine\\Noch hochzuladen\\\\\" + value",
+    "onError": "keep-original",
+    "repeat": false,
+    "description": "Pfad ergaenzen"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "GPSPosition",
+    "expression": "jython:return value.split(\" \")[0][:9] + \",\" + value.split(\" \")[1][:9]",
+    "onError": "keep-original",
+    "repeat": false,
+    "description": "GPS-Koordinaten kuerzen "
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "ImageDescription",
+    "expression": "jython:return value",
+    "onError": "set-to-blank",
+    "newColumnName": "depicts",
+    "columnInsertIndex": 3,
+    "description": "Spalte 'depicts' anlegen"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "SourceFile",
+    "expression": "jython:return value.split(\"/\")[-1]",
+    "onError": "set-to-blank",
+    "newColumnName": "FileName",
+    "columnInsertIndex": 1,
+    "description": "Spalte 'FileName' anlegen"
+  },
+  {
+    "op": "core/recon",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "depicts",
+    "config": {
+      "mode": "standard-service",
+      "service": "https://wikidata.reconci.link/en/api",
+      "identifierSpace": "http://www.wikidata.org/entity/",
+      "schemaSpace": "http://www.wikidata.org/prop/direct/",
+      "autoMatch": true,
+      "batchSize": 10,
+      "columnDetails": [],
+      "limit": 0
+    },
+    "description": "Reconcile cells in column depicts to type null"
+  },
+  {
+    "op": "core/recon",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "FileName",
+    "config": {
+      "mode": "standard-service",
+      "service": "https://commonsreconcile.toolforge.org/en/api",
+      "identifierSpace": "https://commons.wikimedia.org/entity/",
+      "schemaSpace": "http://www.wikidata.org/prop/direct/",
+      "autoMatch": true,
+      "batchSize": 10,
+      "columnDetails": [],
+      "limit": 0
+    },
+    "description": "Zellen in Spalte FileName abgleichen"
+  },
+  {
+    "op": "core/recon-mark-new-topics",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "FileName",
+    "shareNewTopics": false,
+    "description": "Neue Objekte für fehlende Dateien erstellen"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "ImageDescription",
+    "expression": "jython:return value",
+    "onError": "set-to-blank",
+    "newColumnName": "Category",
+    "columnInsertIndex": 4,
+    "description": "Spalte 'Category' anlegen"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "ImageDescription",
+    "expression": "jython:return \"== {{int:filedesc}} ==\\n{{Information}}\\n{{Location|\" + cells['GPSPosition'].value.replace(',','|') + \"}}\\n\\n== {{int:license-header}} ==\\n{{User:Reinhard Kraasch/licence}}\\n\\n[[Category:\" + cells['Category'].value + \"]]\\n[[Category:Files by Reinhard Kraasch]]\"",
+    "onError": "set-to-blank",
+    "newColumnName": "Wikitext",
+    "columnInsertIndex": 4,
+    "description": "Spalte 'Wikitext' anlegen"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "DateTimeOriginal",
+    "expression": "jython:return value.replace(\":\",\"-\",2)",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Spalte 'DateTimeOriginal' umformatieren"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "DateTimeOriginal",
+    "expression": "value.toDate()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Spalte 'DateTimeOriginal' in Datumsformat wandeln"
+  }
+]
