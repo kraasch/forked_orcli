@@ -41,22 +41,22 @@ Simplify project creation, data transformation, metadata management, and export 
 
 1. Clone the repository:
 
-\\\ash
+```bash
 git clone https://github.com/rkraasch/refine-client.git
 cd refine-client
-\\\
+```
 
 2. Install dependencies:
 
-\\\ash
+```bash
 pip install -r requirements.txt
-\\\
+```
 
 ## Quick Start
 
 ### Basic Usage
 
-\\\python
+```python
 from refine_client import Refine
 
 # Initialize the client
@@ -82,11 +82,11 @@ refine.export_data("output_file.tsv", fmt="tsv", project_id=project_id)
 
 # Clean up
 refine.delete_project(project_id)
-\\\
+```
 
 ### Project Metadata
 
-\\\python
+```python
 # Set metadata
 refine.set_project_metadata("name", "Project Name", project_id)
 
@@ -97,11 +97,11 @@ for pid, metadata in projects.items():
 
 # Find by name
 project_id = refine.get_project_id_by_name("Project Name")
-\\\
+```
 
 ### Batch Operations
 
-\\\python
+```python
 # Apply multiple operations
 operations = [
     {"op": "core/column-removal", "columnName": "col1"},
@@ -111,15 +111,15 @@ refine.apply_operations(operations, project_id)
 
 # Load from file
 refine.apply_operations_from_file("operations.json", project_id, wait=True)
-\\\
+```
 
 ## API Reference
 
 ### Initialization
 
-\\\python
+```python
 Refine(base_url=None, verbose=False, silent=False)
-\\\
+```
 
 Parameters:
 - base_url: OpenRefine server URL (default: http://127.0.0.1:3333)
@@ -148,32 +148,32 @@ Parameters:
 
 ### Logging
 
-\\\python
+```python
 # Verbose mode
 refine = Refine(verbose=True)
 
 # Silent mode
 refine = Refine(silent=True)
-\\\
+```
 
 ### Custom Server
 
-\\\python
+```python
 refine = Refine(base_url="http://example.com:3333")
-\\\
+```
 
 ## Error Handling
 
-\\\python
+```python
 try:
     refine.apply_operation(operation, project_id)
 except RuntimeError as e:
     print(f"Error: {e}")
-\\\
+```
 
 ## Testing
 
-\\\ash
+```bash
 # Run all tests
 pytest Test/ -v
 
@@ -182,7 +182,7 @@ pytest Test/test_refine_client.py::TestRefineProjectCreation -v
 
 # With coverage
 pytest Test/ --cov=refine_client
-\\\
+```
 
 Test Coverage:
 - Initialization and connection
@@ -197,7 +197,7 @@ Test Coverage:
 
 ### Example 1: Data Pipeline
 
-\\\python
+```python
 from refine_client import Refine
 
 refine = Refine(verbose=True)
@@ -218,11 +218,11 @@ refine.export_data("processed_data.csv", fmt="csv", project_id=project_id)
 
 # Cleanup
 refine.delete_project(project_id)
-\\\
+```
 
 ### Example 2: Batch Processing
 
-\\\python
+```python
 import os
 from refine_client import Refine
 
@@ -234,7 +234,7 @@ for filename in os.listdir("input_dir/"):
         refine.apply_operations_from_file("operations.json", project_id, wait=True)
         refine.export_data(f"output_dir/{filename}", fmt="csv", project_id=project_id)
         refine.delete_project(project_id)
-\\\
+```
 
 ## Troubleshooting
 
