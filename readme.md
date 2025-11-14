@@ -1,106 +1,69 @@
-# refine-client## Project Overview
+﻿# refine-client
 
-This workspace automates OpenRefine project management and data transformation using Python scripts. It interacts with a running OpenRefine server (default: `http://127.0.0.1:3333`) via HTTP API for project creation, operation application, metadata management, and data export.
+A comprehensive Python client library for interacting with [OpenRefine](https://openrefine.org/) via its REST API.
 
-A comprehensive Python client library for interacting with [OpenRefine](https://openrefine.org/) via its REST API. Simplify project creation, data transformation, metadata management, and export operations.
+Simplify project creation, data transformation, metadata management, and export operations.
 
-## Architecture & Major Components
+## Features
 
-## Features- **Python scripts** 
+### Easy Project Management
 
+- Create projects from local files
+- Delete projects
+- Retrieve and manage project metadata
 
+### Data Transformation
 
-✨ **Easy Project Management**## Key Workflows
+- Apply OpenRefine operations individually or in batches
+- Load operations from JSON files
+- Automatic wait-for-idle synchronization
 
-- Create projects from local files (CSV, TSV, JSON, etc.)1. **Start OpenRefine server** (external, not included in repo).
+### Data Export
 
-- Delete projects2. **Run a script** to:
+- Export data in multiple formats (TSV, CSV, JSON, etc.)
+- Retrieve column information and project models
+- Convert and manipulate row data
 
-- Retrieve project metadata   - Fetch CSRF token
+### Security & Reliability
 
-   - Upload `metadata.csv` as a new project
-
-🔄 **Data Transformation**   - Apply operations from `history.json` (can be stepwise in `or2.py`)
-
-- Apply OpenRefine operations (individually or in batches)   - Optionally set project metadata (see `set_project_metadata` in `or2.py`)
-
-- Load operations from JSON files   - Export cleaned data to `exported_data.tsv` (or numbered files in `or2.py`)
-
-- Apply operations with automatic wait-for-idle   - (Optional) Delete or rename project
-
-3. **Debugging**: On error, check `response.html` for details.
-
-📊 **Data Export**
-
-- Export data in multiple formats (TSV, CSV, JSON, etc.)## Project-Specific Conventions & Patterns
-
-- Retrieve column information and project models- All API requests require a valid CSRF token (`csrf_token` parameter). Always fetch before mutating operations.
-
-- Use `requests.Session()` for persistent cookies and headers.
-
-🔐 **Security**- API endpoints use `/command/core/` prefix.
-
-- Automatic CSRF token management and caching- Project ID is parsed from the redirect URL after project creation.
-
-- Session-based authentication- All file paths are relative to the workspace root.
-
-- Error handling with detailed response logging- Error handling: Write failed responses to `response.html` for inspection. See `_save_error_response` 
-
-- Project metadata can be set for fields like `name`, `description`, `creator`, etc. Use `set_project_metadata` 
+- Automatic CSRF token management and caching
+- Session-based authentication
+- Error handling with detailed response logging
 
 ## Installation
 
-## Integration & Dependencies
+### Requirements
 
-### Requirements- Requires a running OpenRefine server (not included in this repo).
+- Python 3.10+
+- A running OpenRefine server instance
 
-- Python 3.10+- Python dependency: `requests` (install via `pip install requests`).
+### Setup
 
-- A running [OpenRefine](https://openrefine.org/) server
+1. Clone the repository:
 
-## Examples & Usage Patterns
+\\\ash
+git clone https://github.com/rkraasch/refine-client.git
+cd refine-client
+\\\
 
-### Setup- To add new operations, edit `history.json` (must be a JSON array of OpenRefine operations).
+2. Install dependencies:
 
-- To use a different input, replace `metadata.csv`.
-
-1. Clone the repository:- To export as CSV, change the `format` parameter in the export step (see `export_data`).
-
-```bash- To set project metadata, use `set_project_metadata` (see docstring in `or2.py`).
-
-git clone https://github.com/rkraasch/refine-client.git- For stepwise operation and export, see the main block in `or2.py`:
-
-cd refine-client  ```python
-
-```  for operation in data:
-
-      refine.apply_operations([operation])
-
-2. Install dependencies:      refine.export_data(f"exported_data{step}.tsv")
-
-```bash  ```
-
+\\\ash
 pip install -r requirements.txt
+\\\
 
-```## Tips
-
-- If you see `Missing or invalid csrf_token parameter`, ensure the token is fetched and passed correctly.
-
-## Quick Start- For new workflows, use `or1.py` or `or2.py` as the template.
-
-- For debugging, always check `response.html` after errors.
+## Quick Start
 
 ### Basic Usage
 
-
-```python
+\\\python
 from refine_client import Refine
 
 # Initialize the client
 refine = Refine(base_url="http://127.0.0.1:3333")
 
 # Create a project
-project_id = refine.create_project("data.csv", "My Project")
+project_id = refine.create_project("input_file.csv", "My Project")
 
 # Get column names
 columns = refine.get_column_names(project_id)
@@ -110,36 +73,35 @@ print(f"Columns: {columns}")
 operation = {
     "op": "core/column-removal",
     "columnName": "unwanted_column",
-    "description": "Remove unwanted column"
+    "description": "Remove column"
 }
 refine.apply_operation(operation, project_id)
 
 # Export data
-refine.export_data("output.tsv", fmt="tsv", project_id=project_id)
+refine.export_data("output_file.tsv", fmt="tsv", project_id=project_id)
 
 # Clean up
 refine.delete_project(project_id)
-```
+\\\
 
 ### Project Metadata
 
-```python
-# Set project metadata
-refine.set_project_metadata("name", "Updated Project Name", project_id)
-refine.set_project_metadata("description", "Project description", project_id)
+\\\python
+# Set metadata
+refine.set_project_metadata("name", "Project Name", project_id)
 
 # Get all projects
 projects = refine.get_all_projects_metadata()
 for pid, metadata in projects.items():
     print(f"{metadata['name']} (ID: {pid})")
 
-# Find project by name
-project_id = refine.get_project_id_by_name("My Project")
-```
+# Find by name
+project_id = refine.get_project_id_by_name("Project Name")
+\\\
 
 ### Batch Operations
 
-```python
+\\\python
 # Apply multiple operations
 operations = [
     {"op": "core/column-removal", "columnName": "col1"},
@@ -147,229 +109,189 @@ operations = [
 ]
 refine.apply_operations(operations, project_id)
 
-# Load operations from file
+# Load from file
 refine.apply_operations_from_file("operations.json", project_id, wait=True)
-```
-
-### Advanced: Wait for Completion
-
-```python
-# Apply operation and wait for completion
-refine.apply_operation(operation, project_id, wait=True)
-
-# Or manually wait
-refine.wait_until_idle(project_id)
-```
+\\\
 
 ## API Reference
 
 ### Initialization
 
-```python
+\\\python
 Refine(base_url=None, verbose=False, silent=False)
-```
+\\\
 
-**Parameters:**
-- `base_url` (str, optional): OpenRefine server URL (default: `http://127.0.0.1:3333`)
-- `verbose` (bool): Enable verbose logging
-- `silent` (bool): Suppress logging output
+Parameters:
+- base_url: OpenRefine server URL (default: http://127.0.0.1:3333)
+- verbose: Enable verbose logging
+- silent: Suppress logging
 
-### Project Management
-
-| Method | Description |
-|--------|-------------|
-| `create_project(file, name)` | Create a new project from file |
-| `delete_project(project_id)` | Delete a project |
-| `get_all_projects_metadata()` | Get metadata for all projects |
-| `get_project_id_by_name(name)` | Find project ID by name |
-| `set_project_metadata(field, value, project_id)` | Update project metadata |
-
-### Operations
+### Methods
 
 | Method | Description |
 |--------|-------------|
-| `apply_operation(op, project_id, wait=False)` | Apply single operation |
-| `apply_operations(ops, project_id, wait=False)` | Apply multiple operations |
-| `apply_operations_from_file(file, project_id, wait=False)` | Load and apply operations from JSON |
-
-### Data Retrieval
-
-| Method | Description |
-|--------|-------------|
-| `get_models(project_id)` | Get project models |
-| `get_column_names(project_id)` | Get column names |
-| `export_data(file, fmt, project_id)` | Export project data |
-| `rows_as_list(data)` | Convert rows to list format |
-
-### Utility
-
-| Method | Description |
-|--------|-------------|
-| `wait_until_idle(project_id, delay=0.5)` | Wait for processing to complete |
+| create_project(file, name) | Create project |
+| delete_project(project_id) | Delete project |
+| get_all_projects_metadata() | Get all projects |
+| get_project_id_by_name(name) | Find project by name |
+| set_project_metadata(field, value, id) | Update metadata |
+| apply_operation(op, id, wait) | Apply operation |
+| apply_operations(ops, id, wait) | Apply multiple |
+| apply_operations_from_file(file, id, wait) | Load from file |
+| get_models(id) | Get models |
+| get_column_names(id) | Get columns |
+| export_data(file, fmt, id) | Export data |
+| rows_as_list(data) | Convert rows |
+| wait_until_idle(id, delay) | Wait for completion |
 
 ## Configuration
 
 ### Logging
 
-Control logging output:
-
-```python
-# Verbose mode (debug level)
+\\\python
+# Verbose mode
 refine = Refine(verbose=True)
 
-# Silent mode (errors only)
+# Silent mode
 refine = Refine(silent=True)
-```
+\\\
 
-### Custom Base URL
+### Custom Server
 
-```python
-# For remote OpenRefine servers
+\\\python
 refine = Refine(base_url="http://example.com:3333")
-```
+\\\
 
 ## Error Handling
 
-The client automatically saves error responses to `response.html` for debugging:
-
-```python
+\\\python
 try:
     refine.apply_operation(operation, project_id)
 except RuntimeError as e:
     print(f"Error: {e}")
-    print("Check response.html for details")
-```
+\\\
 
 ## Testing
 
-Run the comprehensive test suite:
-
-```bash
+\\\ash
 # Run all tests
 pytest Test/ -v
 
-# Run specific test class
+# Run specific test
 pytest Test/test_refine_client.py::TestRefineProjectCreation -v
 
-# Run with coverage
+# With coverage
 pytest Test/ --cov=refine_client
-```
+\\\
 
-**Test Coverage:**
-- ✅ Initialization and connection handling
-- ✅ CSRF token management
-- ✅ Project creation and deletion
-- ✅ Operations (single, batch, from file)
-- ✅ Data export
-- ✅ Metadata management
-- ✅ Error handling
+Test Coverage:
+- Initialization and connection
+- CSRF token management
+- Project operations
+- Batch operations
+- Data export
+- Metadata management
+- Error handling
 
 ## Examples
 
-### Example 1: Data Cleaning Pipeline
+### Example 1: Data Pipeline
 
-```python
+\\\python
 from refine_client import Refine
 
 refine = Refine(verbose=True)
 
 # Create project
-project_id = refine.create_project("raw_data.csv", "Data Cleanup")
+project_id = refine.create_project("raw_data.csv", "Processing")
 
-# Apply cleaning operations
+# Transform data
 operations = [
-    {"op": "core/column-removal", "columnName": "temporary_id"},
-    {"op": "core/text-transform", "columnName": "email", "expression": "value.toLowerCase()"}
+    {"op": "core/column-removal", "columnName": "temp_field"},
+    {"op": "core/text-transform", "columnName": "email", 
+     "expression": "value.toLowerCase()"}
 ]
 refine.apply_operations(operations, project_id, wait=True)
 
-# Export cleaned data
-refine.export_data("cleaned_data.csv", fmt="csv", project_id=project_id)
+# Export
+refine.export_data("processed_data.csv", fmt="csv", project_id=project_id)
 
 # Cleanup
 refine.delete_project(project_id)
-```
+\\\
 
 ### Example 2: Batch Processing
 
-```python
+\\\python
 import os
 from refine_client import Refine
 
 refine = Refine()
 
-# Process multiple files
-for filename in os.listdir("data/"):
+for filename in os.listdir("input_dir/"):
     if filename.endswith(".csv"):
-        project_id = refine.create_project(f"data/{filename}", filename)
-        
-        # Apply transformations
-        refine.apply_operations_from_file("transformations.json", project_id, wait=True)
-        
-        # Export
-        base_name = os.path.splitext(filename)[0]
-        refine.export_data(f"output/{base_name}_cleaned.csv", fmt="csv", project_id=project_id)
-        
-        # Cleanup
+        project_id = refine.create_project(f"input_dir/{filename}", filename)
+        refine.apply_operations_from_file("operations.json", project_id, wait=True)
+        refine.export_data(f"output_dir/{filename}", fmt="csv", project_id=project_id)
         refine.delete_project(project_id)
-```
+\\\
 
 ## Troubleshooting
 
 ### Connection Issues
 
-**Problem:** `ConnectionError: Could not connect to OpenRefine server`
+Problem: ConnectionError
 
-**Solution:**
-1. Ensure OpenRefine is running: `http://127.0.0.1:3333`
-2. Check the server URL: `refine = Refine(base_url="http://your-server:3333")`
+Solution:
+1. Verify OpenRefine is running
+2. Check server URL
 3. Verify network connectivity
 
 ### CSRF Token Errors
 
-**Problem:** `ValueError: CSRF token retrieval failed`
+Problem: ValueError: CSRF token retrieval failed
 
-**Solution:**
-- The token is automatically fetched. This usually indicates server issues.
-- Check `response.html` for details
+Solution:
+- Usually indicates server issues
+- Check server logs
 
 ### File Not Found
 
-**Problem:** `FileNotFoundError: File not found`
+Problem: FileNotFoundError
 
-**Solution:**
-- Use absolute paths or ensure files are in the working directory
-- Check file permissions
+Solution:
+- Use absolute paths
+- Verify file exists
+- Check permissions
 
 ## Contributing
 
-Contributions are welcome! Please:
-
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit changes
+4. Push to branch
+5. Open Pull Request
 
 ## License
 
-This project is licensed under the CC0 1.0 Universal License - see the LICENSE file for details.
+CC0 1.0 Universal License
 
 ## References
 
-- [OpenRefine Official Documentation](https://docs.openrefine.org/)
-- [OpenRefine REST API](https://docs.openrefine.org/manual/running#command-line-interface)
-- [OpenRefine Operations](https://docs.openrefine.org/manual/running#command-line-interface)
+- [OpenRefine Documentation](https://docs.openrefine.org/)
+- [OpenRefine REST API](https://docs.openrefine.org/manual/running)
+- [OpenRefine Operations](https://docs.openrefine.org/manual/running)
 
 ## Changelog
 
 ### v1.0.0 (2025-11-14)
-- ✅ Initial release
-- ✅ Full project management support
-- ✅ Operation batching
-- ✅ Comprehensive test suite (33 tests)
-- ✅ CI/CD integration with GitHub Actions
+
+- Initial release
+- Full project management
+- Operation batching
+- 33 comprehensive tests
+- GitHub Actions CI/CD
 
 ## Support
 
-For issues, questions, or suggestions, please open an [issue](https://github.com/rkraasch/refine-client/issues) on GitHub.
+Open an issue on [GitHub](https://github.com/rkraasch/refine-client/issues)
