@@ -212,7 +212,7 @@ class Refine:
 
     def get_project_id_by_name(self, name: str = "") -> str | None :
         """Get project id by project name"""
-        projects = refine.get_all_projects_metadata()
+        projects = self.get_all_projects_metadata()
         for pid, metadata in projects.items():
             if metadata["name"] == name:
                 logger.info("Retrieved project id.")
