@@ -295,3 +295,9 @@ CC0 1.0 Universal License
 ## Support
 
 Open an issue on [GitHub](https://github.com/rkraasch/refine-client/issues)
+
+## Similar Projects
+
+  - [paulmakepeace/refine-client-py](https://github.com/paulmakepeace/refine-client-py): OpenRefine Python 2 Client (last update 11 years ago)
+  - [opencultureconsulting/openrefine-client](https://github.com/opencultureconsulting/openrefine-client): OpenRefine Python Client (archived 2024)
+
