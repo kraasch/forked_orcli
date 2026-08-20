@@ -36,6 +36,8 @@ python -m venv .venv
 source .venv/bin/activate  # Linux and Mac.
 # .venv\Scripts\activate   # Windows.
 pip install -r requirements.txt
+python -m pip list
+deactivate
 ```
 
 3. Optionally run tests, see [Testing section](#testing).
