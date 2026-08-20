@@ -40,7 +40,11 @@ python -m pip list
 deactivate
 ```
 
-3. Optionally run tests, see [Testing section](#testing).
+3. Optionally run tests.
+
+```bash
+python -m pytest tests/ -v
+```
 
 4. Basic Usage:
 
@@ -101,6 +105,49 @@ refine.apply_operations(operations, project_id)
 refine.apply_operations_from_file("operations.json", project_id, wait=True)
 ```
 
+## Examples
+
+### Example 1: Data Pipeline
+
+```python
+from refine_client import Refine
+
+refine = Refine(verbose=True)
+
+# Create project
+project_id = refine.create_project("raw_data.csv", "Processing")
+
+# Transform data
+operations = [
+    {"op": "core/column-removal", "columnName": "temp_field"},
+    {"op": "core/text-transform", "columnName": "email",
+     "expression": "value.toLowerCase()"}
+]
+refine.apply_operations(operations, project_id, wait=True)
+
+# Export
+refine.export_data("processed_data.csv", fmt="csv", project_id=project_id)
+
+# Cleanup
+refine.delete_project(project_id)
+```
+
+### Example 2: Batch Processing
+
+```python
+import os
+from refine_client import Refine
+
+refine = Refine()
+
+for filename in os.listdir("input_dir/"):
+    if filename.endswith(".csv"):
+        project_id = refine.create_project(f"input_dir/{filename}", filename)
+        refine.apply_operations_from_file("operations.json", project_id, wait=True)
+        refine.export_data(f"output_dir/{filename}", fmt="csv", project_id=project_id)
+        refine.delete_project(project_id)
+```
+
 ## API Reference
 
 ### Initialization
@@ -148,72 +195,6 @@ refine = Refine(silent=True)
 
 ```python
 refine = Refine(base_url="http://example.com:3333")
-```
-
-## Testing
-
-```bash
-# Run all tests
-pytest tests/ -v
-
-# Run specific test
-pytest tests/test_refine_client.py::TestRefineProjectCreation -v
-
-# With coverage
-pytest tests/ --cov=refine_client
-```
-
-Test Coverage:
-
-  - Initialization and connection
-  - CSRF token management
-  - Project operations
-  - Batch operations
-  - Data export
-  - Metadata management
-  - Error handling
-
-## Examples
-
-### Example 1: Data Pipeline
-
-```python
-from refine_client import Refine
-
-refine = Refine(verbose=True)
-
-# Create project
-project_id = refine.create_project("raw_data.csv", "Processing")
-
-# Transform data
-operations = [
-    {"op": "core/column-removal", "columnName": "temp_field"},
-    {"op": "core/text-transform", "columnName": "email", 
-     "expression": "value.toLowerCase()"}
-]
-refine.apply_operations(operations, project_id, wait=True)
-
-# Export
-refine.export_data("processed_data.csv", fmt="csv", project_id=project_id)
-
-# Cleanup
-refine.delete_project(project_id)
-```
-
-### Example 2: Batch Processing
-
-```python
-import os
-from refine_client import Refine
-
-refine = Refine()
-
-for filename in os.listdir("input_dir/"):
-    if filename.endswith(".csv"):
-        project_id = refine.create_project(f"input_dir/{filename}", filename)
-        refine.apply_operations_from_file("operations.json", project_id, wait=True)
-        refine.export_data(f"output_dir/{filename}", fmt="csv", project_id=project_id)
-        refine.delete_project(project_id)
 ```
 
 ## Troubleshooting
