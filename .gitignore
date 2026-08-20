@@ -1,7 +1,7 @@
 
 # for this specific project:
 response.html
-
+tests/test_output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -210,3 +210,4 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
