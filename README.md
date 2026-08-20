@@ -40,7 +40,7 @@ python -m pip list
 deactivate
 ```
 
-3. Optionally run tests.
+3. Optionally run tests:
 
 ```bash
 python -m pytest tests/ -v
@@ -76,7 +76,7 @@ refine.export_data("output_file.tsv", fmt="tsv", project_id=project_id)
 refine.delete_project(project_id)
 ```
 
-5. Project Metadata
+5. Access Project Metadata:
 
 ```python
 # Set metadata
@@ -91,7 +91,7 @@ for pid, metadata in projects.items():
 project_id = refine.get_project_id_by_name("Project Name")
 ```
 
-6. Batch Operations
+6. Do Batch Operations:
 
 ```python
 # Apply multiple operations
