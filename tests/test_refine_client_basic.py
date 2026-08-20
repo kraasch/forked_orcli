@@ -108,7 +108,7 @@ class TestRefineCSRFToken(unittest.TestCase):
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
         mock_session_class.return_value = mock_session
-        
+
         self.refine = Refine()
         self.mock_session = self.refine.session
 
@@ -120,9 +120,9 @@ class TestRefineCSRFToken(unittest.TestCase):
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
         mock_session_class.return_value = mock_session
-        
+
         refine = Refine()
-        
+
         # Now set up the mock for _get_csrf_token
         token_response = Mock()
         token_response.json.return_value = {"token": "test_csrf_token_123"}
@@ -140,9 +140,9 @@ class TestRefineCSRFToken(unittest.TestCase):
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
         mock_session_class.return_value = mock_session
-        
+
         refine = Refine()
-        
+
         token_response = Mock()
         token_response.json.return_value = {"token": "cached_token"}
         refine.session.get.return_value = token_response
@@ -164,9 +164,9 @@ class TestRefineCSRFToken(unittest.TestCase):
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
         mock_session_class.return_value = mock_session
-        
+
         refine = Refine()
-        
+
         token_response = Mock()
         token_response.json.return_value = {}
         refine.session.get.return_value = token_response
@@ -186,7 +186,7 @@ class TestRefineIDResolution(unittest.TestCase):
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
         mock_session_class.return_value = mock_session
-        
+
         self.refine = Refine()
 
     @patch('refine_client.requests.Session')
@@ -197,7 +197,7 @@ class TestRefineIDResolution(unittest.TestCase):
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
         mock_session_class.return_value = mock_session
-        
+
         refine = Refine()
         result = refine._get_id("project_123")
         self.assertEqual(result, "project_123")
@@ -210,7 +210,7 @@ class TestRefineIDResolution(unittest.TestCase):
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
         mock_session_class.return_value = mock_session
-        
+
         refine = Refine()
         refine.project_id = "loaded_project"
         result = refine._get_id(None)
@@ -224,7 +224,7 @@ class TestRefineIDResolution(unittest.TestCase):
         mock_response.status_code = 200
         mock_session.get.return_value = mock_response
         mock_session_class.return_value = mock_session
-        
+
         refine = Refine()
         with self.assertRaises(ValueError):
             refine._get_id(None)
@@ -295,7 +295,7 @@ class TestRefineProjectCreation(unittest.TestCase):
             error_response.status_code = 500
             error_response.text = "<html>Error</html>"
             refine.session.post.return_value = error_response
-    
+
             with self.assertRaises(RuntimeError):
                 refine.create_project(temp_file, "Test Project")
         finally:
@@ -349,7 +349,7 @@ class TestRefineOperations(unittest.TestCase):
         error_response.status_code = 500
         error_response.text = "<html>Error</html>"
         refine.session.post.return_value = error_response
-    
+
         with self.assertRaises(RuntimeError):
             refine.apply_operation(operation)    @patch('refine_client.requests.Session')
     @patch('refine_client.requests.Session')
@@ -750,6 +750,6 @@ class TestRefineRowsAsList(unittest.TestCase):
         result = refine.rows_as_list(data)
         self.assertEqual(result, [])
 
-
 if __name__ == "__main__":
     unittest.main()
+
