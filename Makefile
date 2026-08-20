@@ -2,9 +2,9 @@
 .PHONY: test
 test:
 	make clean
+	#python -m pytest ./tests/src/test_refine_client_standalone.py
+	python -m pytest ./tests/src/test_refine_client_integration.py
 	#python -m pytest ./tests/ || true
-	python -m pytest ./tests/test_refine_client_basic.py
-	#python -m pytest ./tests/test_refine_client_new.py
 	make clean
 
 clean:
