@@ -2,6 +2,7 @@
 # refine-client
 
 A Python client library for interacting with [OpenRefine](https://openrefine.org/) via its REST API.
+
 For simple project creation, data transformation, metadata management and export operations.
 
 ## Features
@@ -234,5 +235,6 @@ Similar Projects:
 ## License
 
 This project is released under [CC0 1.0 Universal License](https://creativecommons.org/publicdomain/zero/1.0/).
+
 For a plain text version see this project's [LICENSE file](./LICENSE.md) or visit [creativecommons.org](https://creativecommons.org/2011/04/15/plaintext-versions-of-creative-commons-licenses-and-cc0/).
 
