@@ -47,9 +47,8 @@ deactivate
 ```bash
 python -m pytest tests/ -v
 ```
-
-This creates a temporary test project inside OpenRefine which should be cleaned up automatically if everything works as expected.
-The test project will be called `pytest_refine-client-integration_` with a timestamp at the end, if you see it in the `Open project` tab of your [OpenRefine instance](http://127.0.0.1:3333/#open-project) something went wrong.
+This creates temporary test projects in OpenRefine which should be cleaned up automatically.
+If a project prefixed `pytest_refine-client-integration_` remains visible in the Open project tab (under [#open-project](http://127.0.0.1:3333/#open-project)), something went wrong.
 
 4. Basic Usage:
 
