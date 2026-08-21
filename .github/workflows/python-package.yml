@@ -42,5 +42,5 @@ jobs:
       run: |
         pytest tests/src/test_refine_client_standalone.py -v --tb=short
       env:
-        PYTHONPATH: src
+        PYTHONPATH: ${{ github.workspace }}/src
 

@@ -17,7 +17,7 @@ logging.disable(logging.CRITICAL)
 # Add parent directory to path to import refine_client
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.refine_client import Refine
+from refine_client import Refine
 
 
 class TestRefineInitialization(unittest.TestCase):
