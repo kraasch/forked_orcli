@@ -38,9 +38,9 @@ class Refine:
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
         try:
-            response = self.session.get(f"{self.base_url}") 
+            response = self.session.get(f"{self.base_url}")
             response.raise_for_status()
-            logger.info(f"Connected to OpenRefine server at {self.base_url}")   
+            logger.info(f"Connected to OpenRefine server at {self.base_url}")
         except Exception as e:
             logger.error(f"Failed to connect to OpenRefine server at {self.base_url}: {e}")
             raise ConnectionError(f"Could not connect to OpenRefine server at {self.base_url}") from e
@@ -249,12 +249,12 @@ class Refine:
                 break
 
     def rows_as_list(self, data:dict)->list:
-        """Return rows as list"""        
+        """Return rows as list"""
         if 'rows' in data:
             rows_list = [
                 [cell.get("v", None) for cell in row["cells"]]
                 for row in data["rows"]
-            ]  
+            ]
             return rows_list
         else:
             return []

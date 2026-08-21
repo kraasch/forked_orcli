@@ -1,43 +1,26 @@
-﻿# refine-client
+﻿
+# refine-client
 
-A comprehensive Python client library for interacting with [OpenRefine](https://openrefine.org/) via its REST API.
-
-Simplify project creation, data transformation, metadata management, and export operations.
+A Python client library for interacting with [OpenRefine](https://openrefine.org/) via its REST API.
+For simple project creation, data transformation, metadata management and export operations.
 
 ## Features
 
-### Easy Project Management
-
-- Create projects from local files
-- Delete projects
-- Retrieve and manage project metadata
-
-### Data Transformation
-
-- Apply OpenRefine operations individually or in batches
-- Load operations from JSON files
-- Automatic wait-for-idle synchronization
-
-### Data Export
-
-- Export data in multiple formats (TSV, CSV, JSON, etc.)
-- Retrieve column information and project models
-- Convert and manipulate row data
-
-### Security & Reliability
-
-- Automatic CSRF token management and caching
-- Session-based authentication
-- Error handling with detailed response logging
+  - Create and delete projects from local files.
+  - Retrieve and manage project metadata.
+  - Apply OpenRefine operations individually or in batches.
+  - Load operations from JSON files.
+  - Export data in multiple formats (TSV, CSV, JSON).
+  - Retrieve column information and project models, convert and manipulate row data.
+  - Error handling with detailed response logging.
 
 ## Installation
 
 ### Requirements
 
-- Python 3.10+
-- A running OpenRefine server instance
+Requires Python 3.10+ and a running OpenRefine server instance.
 
-### Setup
+### Quick Start
 
 1. Clone the repository:
 
@@ -49,12 +32,25 @@ cd refine-client
 2. Install dependencies:
 
 ```bash
+python -m venv .venv
+source [.venv/bin/activate](.venv/bin/activate)  # Linux and Mac.
+# .venv\Scripts\activate   # Windows.
 pip install -r requirements.txt
+python -m pip list
+deactivate
 ```
 
-## Quick Start
+3. Optionally run tests:
 
-### Basic Usage
+[Download](https://openrefine.org/download) and run OpenRefine, then run the tests as shown below.
+
+```bash
+python -m pytest tests/ -v
+```
+This creates temporary test projects in OpenRefine which should be cleaned up automatically.
+If a project prefixed `pytest_refine-client-integration_` remains visible in the Open project tab (under [#open-project](http://127.0.0.1:3333/#open-project)), something went wrong.
+
+4. Basic Usage:
 
 ```python
 from refine_client import Refine
@@ -84,7 +80,7 @@ refine.export_data("output_file.tsv", fmt="tsv", project_id=project_id)
 refine.delete_project(project_id)
 ```
 
-### Project Metadata
+5. Access Project Metadata:
 
 ```python
 # Set metadata
@@ -99,7 +95,7 @@ for pid, metadata in projects.items():
 project_id = refine.get_project_id_by_name("Project Name")
 ```
 
-### Batch Operations
+6. Do Batch Operations:
 
 ```python
 # Apply multiple operations
@@ -111,6 +107,49 @@ refine.apply_operations(operations, project_id)
 
 # Load from file
 refine.apply_operations_from_file("operations.json", project_id, wait=True)
+```
+
+## Examples
+
+### Example 1: Data Pipeline
+
+```python
+from refine_client import Refine
+
+refine = Refine(verbose=True)
+
+# Create project
+project_id = refine.create_project("raw_data.csv", "Processing")
+
+# Transform data
+operations = [
+    {"op": "core/column-removal", "columnName": "temp_field"},
+    {"op": "core/text-transform", "columnName": "email",
+     "expression": "value.toLowerCase()"}
+]
+refine.apply_operations(operations, project_id, wait=True)
+
+# Export
+refine.export_data("processed_data.csv", fmt="csv", project_id=project_id)
+
+# Cleanup
+refine.delete_project(project_id)
+```
+
+### Example 2: Batch Processing
+
+```python
+import os
+from refine_client import Refine
+
+refine = Refine()
+
+for filename in os.listdir("input_dir/"):
+    if filename.endswith(".csv"):
+        project_id = refine.create_project(f"input_dir/{filename}", filename)
+        refine.apply_operations_from_file("operations.json", project_id, wait=True)
+        refine.export_data(f"output_dir/{filename}", fmt="csv", project_id=project_id)
+        refine.delete_project(project_id)
 ```
 
 ## API Reference
@@ -162,142 +201,38 @@ refine = Refine(silent=True)
 refine = Refine(base_url="http://example.com:3333")
 ```
 
-## Error Handling
-
-```python
-try:
-    refine.apply_operation(operation, project_id)
-except RuntimeError as e:
-    print(f"Error: {e}")
-```
-
-## Testing
-
-```bash
-# Run all tests
-pytest Test/ -v
-
-# Run specific test
-pytest Test/test_refine_client.py::TestRefineProjectCreation -v
-
-# With coverage
-pytest Test/ --cov=refine_client
-```
-
-Test Coverage:
-- Initialization and connection
-- CSRF token management
-- Project operations
-- Batch operations
-- Data export
-- Metadata management
-- Error handling
-
-## Examples
-
-### Example 1: Data Pipeline
-
-```python
-from refine_client import Refine
-
-refine = Refine(verbose=True)
-
-# Create project
-project_id = refine.create_project("raw_data.csv", "Processing")
-
-# Transform data
-operations = [
-    {"op": "core/column-removal", "columnName": "temp_field"},
-    {"op": "core/text-transform", "columnName": "email", 
-     "expression": "value.toLowerCase()"}
-]
-refine.apply_operations(operations, project_id, wait=True)
-
-# Export
-refine.export_data("processed_data.csv", fmt="csv", project_id=project_id)
-
-# Cleanup
-refine.delete_project(project_id)
-```
-
-### Example 2: Batch Processing
-
-```python
-import os
-from refine_client import Refine
-
-refine = Refine()
-
-for filename in os.listdir("input_dir/"):
-    if filename.endswith(".csv"):
-        project_id = refine.create_project(f"input_dir/{filename}", filename)
-        refine.apply_operations_from_file("operations.json", project_id, wait=True)
-        refine.export_data(f"output_dir/{filename}", fmt="csv", project_id=project_id)
-        refine.delete_project(project_id)
-```
-
 ## Troubleshooting
 
-### Connection Issues
+  - **ConnectionError:** Ensure OpenRefine is running, verify the server URL and check network connectivity.
+  - **CSRF token errors:** Check server status and logs.
+  - **FileNotFoundError:** Use absolute paths, verify the file exists and check permissions.
 
-Problem: ConnectionError
+## Support and Contribute
 
-Solution:
-1. Verify OpenRefine is running
-2. Check server URL
-3. Verify network connectivity
+Open an issue on the project's [issues tab](https://github.com/rkraasch/refine-client/issues) on Github.
 
-### CSRF Token Errors
+Or contribute via Github:
 
-Problem: ValueError: CSRF token retrieval failed
-
-Solution:
-- Usually indicates server issues
-- Check server logs
-
-### File Not Found
-
-Problem: FileNotFoundError
-
-Solution:
-- Use absolute paths
-- Verify file exists
-- Check permissions
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit changes
-4. Push to branch
-5. Open Pull Request
-
-## License
-
-CC0 1.0 Universal License
+  - fork the repository,
+  - create a feature branch,
+  - commit changes,
+  - push to branch,
+  - open Pull Request.
 
 ## References
 
-- [OpenRefine Documentation](https://docs.openrefine.org/)
-- [OpenRefine REST API](https://docs.openrefine.org/manual/running)
-- [OpenRefine Operations](https://docs.openrefine.org/manual/running)
+References:
 
-## Changelog
+  - [OpenRefine Documentation](https://docs.openrefine.org/)
+  - [OpenRefine REST API](https://docs.openrefine.org/manual/running)
 
-### v1.0.0 (2025-11-14)
+Similar Projects:
 
-- Initial release
-- Full project management
-- Operation batching
-- 33 comprehensive tests
-- GitHub Actions CI/CD
+  - [paulmakepeace/refine-client-py](https://github.com/paulmakepeace/refine-client-py): OpenRefine Python 2 Client (last update 11 years ago).
+  - [opencultureconsulting/openrefine-client](https://github.com/opencultureconsulting/openrefine-client): OpenRefine Python Client (archived 2024).
 
-## Support
+## License
 
-Open an issue on [GitHub](https://github.com/rkraasch/refine-client/issues)
-
-## Similar Projects
-
-  - [paulmakepeace/refine-client-py](https://github.com/paulmakepeace/refine-client-py): OpenRefine Python 2 Client (last update 11 years ago)
-  - [opencultureconsulting/openrefine-client](https://github.com/opencultureconsulting/openrefine-client): OpenRefine Python Client (archived 2024)
+This project is released under [CC0 1.0 Universal License](https://creativecommons.org/publicdomain/zero/1.0/).
+For a plain text version see this project's [LICENSE file](./LICENSE.md) or visit [creativecommons.org](https://creativecommons.org/2011/04/15/plaintext-versions-of-creative-commons-licenses-and-cc0/).
 

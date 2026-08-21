@@ -40,5 +40,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest tests/test_refine_client_basic.py -v --tb=short
+        pytest tests/src/test_refine_client_standalone.py -v --tb=short
+      env:
+        PYTHONPATH: ${{ github.workspace }}/src
 
