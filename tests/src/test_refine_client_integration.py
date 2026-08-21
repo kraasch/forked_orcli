@@ -1,30 +1,37 @@
 
 import pytest
 
+from datetime import datetime
 from refine_client import Refine
 
-def test_create_project():
+def test_create_project(tmp_path):
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     # Create a small CSV file for the new OpenRefine project.
-    csv_file = "test_data.csv"
-    with open(csv_file, "w", encoding="utf-8") as f:
-        f.write("name,age\nAlice,30\nBob,25\n")
+    csv_file = tmp_path / f"pytest_data_{timestamp}.csv"
+    csv_file.write_text(
+        "name,age\nAlice,30\nBob,25\n",
+        encoding="utf-8",
+    )
+    # Timestamped OpenRefine project name.
+    project_name = f"pytest_refine-client-integration_{timestamp}"
     refine = Refine()
     try:
         project_id = refine.create_project(
-            project_file=csv_file,
-            project_name="pytest-test-project",
+            project_file=str(csv_file),
+            project_name=project_name,
         )
         # Verify that OpenRefine created a project.
+        assert project_id
         assert project_id is not None
         assert refine.project_id == project_id
-        # Verify the table/columns were created correctly.
+        # Verify table and columns were created correctly.
         columns = refine.get_column_names(project_id)
         assert columns == ["name", "age"]
     finally:
         pass
         # Clean up the test project.
-        if refine.project_id:
-            refine.delete_project(refine.project_id)
+        #if refine.project_id:
+        #    refine.delete_project(refine.project_id)
 
 # def test_manipulate_data():
 #     import json
