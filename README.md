@@ -33,7 +33,7 @@ cd refine-client
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Linux and Mac.
+source [.venv/bin/activate](.venv/bin/activate)  # Linux and Mac.
 # .venv\Scripts\activate   # Windows.
 pip install -r requirements.txt
 python -m pip list
@@ -42,9 +42,14 @@ deactivate
 
 3. Optionally run tests:
 
+[Download](https://openrefine.org/download) and run OpenRefine, then run the tests as shown below.
+
 ```bash
 python -m pytest tests/ -v
 ```
+
+This creates a temporary test project inside OpenRefine which should be cleaned up automatically if everything works as expected.
+The test project will be called `pytest_refine-client-integration_` with a timestamp at the end, if you see it in the `Open project` tab of your [OpenRefine instance](http://127.0.0.1:3333/#open-project) something went wrong.
 
 4. Basic Usage:
 
