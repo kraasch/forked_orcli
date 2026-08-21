@@ -52,10 +52,10 @@ def test_manipulate_data():
     	    else:
     	        logger.info(f"Delete Project {pid}: {metadata['name']}")
     	        refine.delete_project(pid)
-    	pid = refine.create_project(os.path.join("tests", "fixtures", "metadata.csv"), "MeinProjekt")
+    	pid = refine.create_project(os.path.join("tests", "fixtures", "metadata.tsv"), "MeinProjekt")
     	refine.set_project_metadata("description", "Dies ist ein Testprojekt.")
     	refine.set_project_metadata("name", "TestProjekt")
-    	refine.export_data(os.path.join("tests", "test_output", "metadata.csv"), "tsv")
+    	refine.export_data(os.path.join("tests", "test_output", "metadata.csv"), "csv")
     	logger.info("Columns: " + str(refine.get_column_names()))
     	logger.info("Models: " + json.dumps(refine.get_models(),indent=2))
     finally:
