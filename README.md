@@ -5,6 +5,8 @@ A Python client library for interacting with [OpenRefine](https://openrefine.org
 
 For simple project creation, data transformation, metadata management and export operations.
 
+Find the package as `orcli` on PyPI at [pypi.org/orcli](https://pypi.org/project/orcli/).
+
 ## Features
 
   - Create and delete projects from local files.
@@ -23,11 +25,22 @@ Requires Python 3.10+ and a running OpenRefine server instance.
 
 ### Quick Start
 
-1. Clone the repository:
+1. Get it:
+
+Clone the repository (see below).
 
 ```bash
 git clone https://github.com/rkraasch/refine-client.git
 cd refine-client
+```
+
+Or download from PyPI (see below).
+
+```bash
+python -m venv .venv
+./venv/bin/python -m pip install --upgrade pip
+./venv/bin/python -m pip install orcli
+./venv/bin/python -c "from orcli import Refine; print(Refine)"
 ```
 
 2. Install dependencies:
