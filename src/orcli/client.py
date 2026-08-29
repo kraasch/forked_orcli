@@ -2,21 +2,17 @@
 # client.py
 # (c) 2025 RK, Lic. CC-0
 
-import json, time, logging, requests
+import json, time, requests
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
+import logging
 
 logger = logging.getLogger(__name__)
-# Library logger setup – no default handlers, safe for reuse
-if not logger.hasHandlers():
-    null_handler = logging.NullHandler()
-    logger.addHandler(null_handler)
+logger.addHandler(logging.NullHandler())
 
 class Refine:
     """Client interface for interacting with an OpenRefine server through its REST API."""
-
     DEFAULT_BASE_URL = "http://127.0.0.1:3333"
-
     def __init__(self, base_url: str | None = None, verbose: bool = False, silent: bool = False) -> None:
         self.base_url: str = (base_url or self.DEFAULT_BASE_URL).rstrip("/")
         self.session = requests.Session()
@@ -24,19 +20,6 @@ class Refine:
         self.project_id: str | None = None
         self.silent: bool = silent
         self.verbose: bool = verbose
-        logger.setLevel(logging.INFO)
-        if silent:
-            logger.setLevel(logging.ERROR)
-        elif verbose:
-            logger.setLevel(logging.DEBUG)
-            logger.debug("Verbose logging enabled.")
-        stream_handler = logging.StreamHandler()
-        stream_handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter(
-            "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
-        )
-        stream_handler.setFormatter(formatter)
-        logger.addHandler(stream_handler)
         try:
             response = self.session.get(f"{self.base_url}")
             response.raise_for_status()
@@ -44,7 +27,6 @@ class Refine:
         except Exception as e:
             logger.error(f"Failed to connect to OpenRefine server at {self.base_url}: {e}")
             raise ConnectionError(f"Could not connect to OpenRefine server at {self.base_url}") from e
-
 
     def _get_csrf_token(self) -> str:
         """Fetch CSRF token from server and cache it."""
@@ -261,7 +243,4 @@ class Refine:
 
 if __name__ == "__main__":
     refine = Refine(verbose=True)
-    # Example usage:
-    # project_id = refine.create_project("data.csv", "My Project")
-    # refine.apply_operations_from_file("operations.json", project_id, wait=True)
-    # refine.export_data("output.tsv", "tsv", project_id)
+
