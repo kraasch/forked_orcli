@@ -5,7 +5,7 @@ A Python client library for interacting with [OpenRefine](https://openrefine.org
 
 For simple project creation, data transformation, metadata management and export operations.
 
-Find the package as `orcli` on PyPI at [pypi.org/project/orcli](https://pypi.org/project/orcli/).
+Find the [orcli package](https://pypi.org/project/orcli/) on PyPI.
 
 ## Features
 
@@ -25,7 +25,7 @@ Requires Python 3.10+ and a running OpenRefine server instance.
 
 ### Quick Start
 
-1. Get it:
+1. Download:
 
 Clone the repository (see below).
 
@@ -34,7 +34,7 @@ git clone https://github.com/rkraasch/refine-client.git
 cd refine-client
 ```
 
-Or download from PyPI (see below).
+Or download from [orcli from PyPI](https://pypi.org/project/orcli/). (see below).
 
 ```bash
 python -m venv ./venv
@@ -43,18 +43,7 @@ python -m venv ./venv
 ./venv/bin/python -c "from orcli import Refine; print(Refine)"
 ```
 
-2. Install dependencies:
-
-```bash
-python -m venv .venv
-source [.venv/bin/activate](.venv/bin/activate)  # Linux and Mac.
-# .venv\Scripts\activate   # Windows.
-pip install -r requirements.txt
-python -m pip list
-deactivate
-```
-
-3. Optionally run tests:
+2. Optionally run tests:
 
 [Download](https://openrefine.org/download) and run OpenRefine, then run the tests as shown below.
 
@@ -64,7 +53,7 @@ python -m pytest tests/ -v
 This creates temporary test projects in OpenRefine which should be cleaned up automatically.
 If a project prefixed `pytest_refine-client-integration_` remains visible in the Open project tab (under [#open-project](http://127.0.0.1:3333/#open-project)), something went wrong.
 
-4. Basic Usage:
+3. Basic usage:
 
 ```python
 from orcli import Refine
@@ -94,7 +83,9 @@ refine.export_data("output_file.tsv", fmt="tsv", project_id=project_id)
 refine.delete_project(project_id)
 ```
 
-5. Access Project Metadata:
+## Examples
+
+### Example 1: Access Project Metadata
 
 ```python
 # Set metadata
@@ -109,7 +100,7 @@ for pid, metadata in projects.items():
 project_id = refine.get_project_id_by_name("Project Name")
 ```
 
-6. Do Batch Operations:
+### Example 2: Do Batch Operations
 
 ```python
 # Apply multiple operations
@@ -123,9 +114,7 @@ refine.apply_operations(operations, project_id)
 refine.apply_operations_from_file("operations.json", project_id, wait=True)
 ```
 
-## Examples
-
-### Example 1: Data Pipeline
+### Example 3: Data Pipeline
 
 ```python
 from orcli import Refine
@@ -150,7 +139,7 @@ refine.export_data("processed_data.csv", fmt="csv", project_id=project_id)
 refine.delete_project(project_id)
 ```
 
-### Example 2: Batch Processing
+### Example 4: Batch Processing
 
 ```python
 import os
@@ -199,7 +188,7 @@ Parameters:
 
 ## Configuration
 
-### Logging
+Logging:
 
 ```python
 # Verbose mode
@@ -209,7 +198,7 @@ refine = Refine(verbose=True)
 refine = Refine(silent=True)
 ```
 
-### Custom Server
+Custom server:
 
 ```python
 refine = Refine(base_url="http://example.com:3333")
