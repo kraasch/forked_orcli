@@ -37,7 +37,7 @@ cd refine-client
 Or download from PyPI (see below).
 
 ```bash
-python -m venv .venv
+python -m venv ./venv
 ./venv/bin/python -m pip install --upgrade pip
 ./venv/bin/python -m pip install orcli
 ./venv/bin/python -c "from orcli import Refine; print(Refine)"
