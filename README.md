@@ -34,7 +34,7 @@ git clone https://github.com/rkraasch/refine-client.git
 cd refine-client
 ```
 
-Or download from [orcli from PyPI](https://pypi.org/project/orcli/). (see below).
+Or download from [orcli from PyPI](https://pypi.org/project/orcli/) (see below).
 
 ```bash
 python -m venv ./venv
