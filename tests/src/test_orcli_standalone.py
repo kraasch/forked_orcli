@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# test_refine_client.py
-# Unit tests for refine_client.py
+# test_orcli.py
+# Unit tests for orcli.py
 
 import unittest
 import json
@@ -14,16 +14,15 @@ import logging
 # Disable logging during tests
 logging.disable(logging.CRITICAL)
 
-# Add parent directory to path to import refine_client
+# Add parent directory to path to import orcli
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from refine_client import Refine
-
+from orcli import Refine
 
 class TestRefineInitialization(unittest.TestCase):
     """Test cases for Refine class initialization."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_init_default_url(self, mock_session_class):
         """Test initialization with default URL."""
         mock_session = Mock()
@@ -38,7 +37,7 @@ class TestRefineInitialization(unittest.TestCase):
         self.assertFalse(refine.silent)
         self.assertFalse(refine.verbose)
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_init_custom_url(self, mock_session_class):
         """Test initialization with custom URL."""
         mock_session = Mock()
@@ -50,7 +49,7 @@ class TestRefineInitialization(unittest.TestCase):
         refine = Refine(base_url="http://example.com:3333")
         self.assertEqual(refine.base_url, "http://example.com:3333")
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_init_url_trailing_slash_removed(self, mock_session_class):
         """Test that trailing slashes are removed from base_url."""
         mock_session = Mock()
@@ -62,7 +61,7 @@ class TestRefineInitialization(unittest.TestCase):
         refine = Refine(base_url="http://example.com:3333/")
         self.assertEqual(refine.base_url, "http://example.com:3333")
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_init_connection_failure(self, mock_session_class):
         """Test initialization fails when server is unreachable."""
         mock_session = Mock()
@@ -72,7 +71,7 @@ class TestRefineInitialization(unittest.TestCase):
         with self.assertRaises(ConnectionError):
             Refine()
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_init_verbose_mode(self, mock_session_class):
         """Test initialization with verbose mode."""
         mock_session = Mock()
@@ -84,7 +83,7 @@ class TestRefineInitialization(unittest.TestCase):
         refine = Refine(verbose=True)
         self.assertTrue(refine.verbose)
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_init_silent_mode(self, mock_session_class):
         """Test initialization with silent mode."""
         mock_session = Mock()
@@ -100,7 +99,7 @@ class TestRefineInitialization(unittest.TestCase):
 class TestRefineCSRFToken(unittest.TestCase):
     """Test cases for CSRF token handling."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def setUp(self, mock_session_class):
         """Set up test fixtures."""
         mock_session = Mock()
@@ -112,7 +111,7 @@ class TestRefineCSRFToken(unittest.TestCase):
         self.refine = Refine()
         self.mock_session = self.refine.session
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_csrf_token_success(self, mock_session_class):
         """Test successful CSRF token retrieval."""
         mock_session = Mock()
@@ -132,7 +131,7 @@ class TestRefineCSRFToken(unittest.TestCase):
         self.assertEqual(token, "test_csrf_token_123")
         self.assertEqual(refine.csrf_token, "test_csrf_token_123")
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_csrf_token_cached(self, mock_session_class):
         """Test that CSRF token is cached after first retrieval."""
         mock_session = Mock()
@@ -156,7 +155,7 @@ class TestRefineCSRFToken(unittest.TestCase):
         # Should not call again since it's cached
         self.assertEqual(refine.session.get.call_count, 0)
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_csrf_token_missing(self, mock_session_class):
         """Test CSRF token retrieval fails when token is missing."""
         mock_session = Mock()
@@ -178,7 +177,7 @@ class TestRefineCSRFToken(unittest.TestCase):
 class TestRefineIDResolution(unittest.TestCase):
     """Test cases for project ID resolution."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def setUp(self, mock_session_class):
         """Set up test fixtures."""
         mock_session = Mock()
@@ -189,7 +188,7 @@ class TestRefineIDResolution(unittest.TestCase):
 
         self.refine = Refine()
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_id_with_explicit_id(self, mock_session_class):
         """Test _get_id returns explicit project ID."""
         mock_session = Mock()
@@ -202,7 +201,7 @@ class TestRefineIDResolution(unittest.TestCase):
         result = refine._get_id("project_123")
         self.assertEqual(result, "project_123")
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_id_with_loaded_id(self, mock_session_class):
         """Test _get_id returns loaded project ID."""
         mock_session = Mock()
@@ -216,7 +215,7 @@ class TestRefineIDResolution(unittest.TestCase):
         result = refine._get_id(None)
         self.assertEqual(result, "loaded_project")
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_id_no_id_raises_error(self, mock_session_class):
         """Test _get_id raises error when no ID is available."""
         mock_session = Mock()
@@ -233,7 +232,7 @@ class TestRefineIDResolution(unittest.TestCase):
 class TestRefineProjectCreation(unittest.TestCase):
     """Test cases for project creation."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_create_project_success(self, mock_session_class):
         """Test successful project creation."""
         mock_session = Mock()
@@ -261,7 +260,7 @@ class TestRefineProjectCreation(unittest.TestCase):
         finally:
             os.unlink(temp_file)
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_create_project_file_not_found(self, mock_session_class):
         """Test project creation fails when file doesn't exist."""
         mock_session = Mock()
@@ -274,7 +273,7 @@ class TestRefineProjectCreation(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             refine.create_project("nonexistent.csv", "Test Project")
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_create_project_upload_failed(self, mock_session_class):
         """Test project creation fails when upload returns error."""
         mock_session = Mock()
@@ -303,7 +302,7 @@ class TestRefineProjectCreation(unittest.TestCase):
 class TestRefineOperations(unittest.TestCase):
     """Test cases for applying operations."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_apply_operation_success(self, mock_session_class):
         """Test successful operation application."""
         mock_session = Mock()
@@ -330,7 +329,7 @@ class TestRefineOperations(unittest.TestCase):
         result = refine.apply_operation(operation)
         self.assertEqual(result, {"code": "ok"})
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_apply_operation_failure(self, mock_session_class):
         """Test operation application fails on error status."""
         mock_session = Mock()
@@ -351,8 +350,9 @@ class TestRefineOperations(unittest.TestCase):
         refine.session.post.return_value = error_response
 
         with self.assertRaises(RuntimeError):
-            refine.apply_operation(operation)    @patch('refine_client.requests.Session')
-    @patch('refine_client.requests.Session')
+            refine.apply_operation(operation)
+
+    @patch('orcli.client.requests.Session')
     def test_apply_multiple_operations(self, mock_session_class):
         """Test applying multiple operations."""
         mock_session = Mock()
@@ -378,7 +378,7 @@ class TestRefineOperations(unittest.TestCase):
         results = refine.apply_operations(operations)
         self.assertEqual(len(results), 2)
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_apply_operations_from_file(self, mock_session_class):
         """Test applying operations from a JSON file."""
         mock_session = Mock()
@@ -410,7 +410,7 @@ class TestRefineOperations(unittest.TestCase):
         finally:
             os.unlink(temp_file)
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_apply_operations_from_file_not_found(self, mock_session_class):
         """Test apply_operations_from_file fails when file doesn't exist."""
         mock_session = Mock()
@@ -423,8 +423,8 @@ class TestRefineOperations(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             refine.apply_operations_from_file("nonexistent.json")
 
-    @patch('refine_client.requests.Session')
-    @patch('refine_client.time.sleep')
+    @patch('orcli.client.requests.Session')
+    @patch('orcli.client.time.sleep')
     def test_apply_operation_with_wait(self, mock_sleep, mock_session_class):
         """Test applying operation with wait."""
         mock_session = Mock()
@@ -456,7 +456,7 @@ class TestRefineOperations(unittest.TestCase):
 class TestRefineExport(unittest.TestCase):
     """Test cases for data export."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_export_data_success(self, mock_session_class):
         """Test successful data export."""
         mock_session = Mock()
@@ -480,7 +480,7 @@ class TestRefineExport(unittest.TestCase):
             refine.export_data(output_file, "tsv")
             self.assertTrue(os.path.exists(output_file))
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_export_data_failure(self, mock_session_class):
         """Test export data fails on error status."""
         mock_session = Mock()
@@ -505,7 +505,7 @@ class TestRefineExport(unittest.TestCase):
 class TestRefineModelsAndColumns(unittest.TestCase):
     """Test cases for getting models and column information."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_models_success(self, mock_session_class):
         """Test successful retrieval of models."""
         mock_session = Mock()
@@ -535,7 +535,7 @@ class TestRefineModelsAndColumns(unittest.TestCase):
         result = refine.get_models()
         self.assertEqual(result, mock_data)
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_column_names_success(self, mock_session_class):
         """Test successful retrieval of column names."""
         mock_session = Mock()
@@ -570,7 +570,7 @@ class TestRefineModelsAndColumns(unittest.TestCase):
 class TestRefineProjectDeletion(unittest.TestCase):
     """Test cases for project deletion."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_delete_project_success(self, mock_session_class):
         """Test successful project deletion."""
         mock_session = Mock()
@@ -590,7 +590,7 @@ class TestRefineProjectDeletion(unittest.TestCase):
         refine.delete_project()
         refine.session.post.assert_called_once()
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_delete_project_failure(self, mock_session_class):
         """Test project deletion fails on error status."""
         mock_session = Mock()
@@ -615,7 +615,7 @@ class TestRefineProjectDeletion(unittest.TestCase):
 class TestRefineProjectMetadata(unittest.TestCase):
     """Test cases for project metadata operations."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_all_projects_metadata_success(self, mock_session_class):
         """Test successful retrieval of all projects metadata."""
         mock_session = Mock()
@@ -642,7 +642,7 @@ class TestRefineProjectMetadata(unittest.TestCase):
         self.assertEqual(len(result), 2)
         self.assertIn("1234", result)
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_get_project_id_by_name_found(self, mock_session_class):
         """Test finding project ID by name."""
         mock_session = Mock()
@@ -669,7 +669,7 @@ class TestRefineProjectMetadata(unittest.TestCase):
         result = refine.get_project_id_by_name("Test Project")
         self.assertEqual(result, "1234")
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_set_project_metadata_success(self, mock_session_class):
         """Test successful project metadata update."""
         mock_session = Mock()
@@ -693,7 +693,7 @@ class TestRefineProjectMetadata(unittest.TestCase):
 class TestRefineRowsAsList(unittest.TestCase):
     """Test cases for rows_as_list utility method."""
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_rows_as_list_with_data(self, mock_session_class):
         """Test rows_as_list converts row data correctly."""
         mock_session = Mock()
@@ -714,7 +714,7 @@ class TestRefineRowsAsList(unittest.TestCase):
         result = refine.rows_as_list(data)
         self.assertEqual(result, [["val1", "val2"], ["val3", "val4"]])
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_rows_as_list_with_none_values(self, mock_session_class):
         """Test rows_as_list handles None values correctly."""
         mock_session = Mock()
@@ -735,7 +735,7 @@ class TestRefineRowsAsList(unittest.TestCase):
         result = refine.rows_as_list(data)
         self.assertEqual(result, [["val1", None], [None, "val2"]])
 
-    @patch('refine_client.requests.Session')
+    @patch('orcli.client.requests.Session')
     def test_rows_as_list_empty_rows(self, mock_session_class):
         """Test rows_as_list handles empty rows list."""
         mock_session = Mock()
