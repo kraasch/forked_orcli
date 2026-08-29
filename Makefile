@@ -10,7 +10,7 @@ test:
 	python -m venv .venv
 	.venv/bin/python -m pip install --upgrade pip
 	.venv/bin/python -m pip install -e ".[test]"
-	.venv/bin/python -m pytest ./tests/
+	.venv/bin/python -m pytest ./tests/ -v
 	#.venv/bin/python -m pytest ./tests/src/test_refine_client_standalone.py
 	#.venv/bin/python -m pytest ./tests/src/test_refine_client_integration.py
 
