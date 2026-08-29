@@ -4,7 +4,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "refine-client"
+name = "orcli"
 version = "0.1.0"
 description = "A Python client for interacting with OpenRefine"
 readme = "README.md"

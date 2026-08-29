@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# refine_client.py
+# client.py
 # (c) 2025 RK, Lic. CC-0
 
 import json, time, logging, requests

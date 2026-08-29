@@ -1,5 +1,5 @@
 
-.PHONY: run-clean-tests test build test-wheel check clean
+.PHONY: run-clean-tests test build test-wheel check publish clean
 
 run-clean-tests:
 	make clean
@@ -24,12 +24,17 @@ test-wheel: build
 	python -m venv .venv-wheel
 	.venv-wheel/bin/python -m pip install --upgrade pip
 	.venv-wheel/bin/python -m pip install dist/*.whl
-	.venv-wheel/bin/python -c "from refine_client import Refine; print(Refine)"
+	.venv-wheel/bin/python -c "from orcli import Refine; print(Refine)"
 
 check: test-wheel
 	.venv/bin/python -m pip install twine
 	.venv/bin/python -m twine check dist/*
 
+publish: check
+	.venv/bin/python -m twine upload dist/*
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -r {} +
+	rm -rf build dist *.egg-info src/*.egg-info
+
 

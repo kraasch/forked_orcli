@@ -2,7 +2,7 @@
 import pytest
 
 from datetime import datetime
-from refine_client import Refine
+from orcli import Refine
 from pathlib import Path
 
 def create_test_output():
