@@ -28,7 +28,7 @@ test-wheel: build
 
 check: test-wheel
 	.venv/bin/python -m pip install twine
-	.venv/bin/python -m twine check dist/*
+	.venv/bin/python -m twine check --strict dist/*
 
 publish: check
 	.venv/bin/python -m twine upload dist/*
