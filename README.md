@@ -5,7 +5,7 @@ A Python client library for interacting with [OpenRefine](https://openrefine.org
 
 For simple project creation, data transformation, metadata management and export operations.
 
-Find the package as `orcli` on PyPI at [pypi.org/orcli](https://pypi.org/project/orcli/).
+Find the package as `orcli` on PyPI at [pypi.org/project/orcli](https://pypi.org/project/orcli/).
 
 ## Features
 
