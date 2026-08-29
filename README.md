@@ -1,5 +1,5 @@
 ﻿
-# refine-client
+# orcli -- open-refine client
 
 A Python client library for interacting with [OpenRefine](https://openrefine.org/) via its REST API.
 
@@ -54,7 +54,7 @@ If a project prefixed `pytest_refine-client-integration_` remains visible in the
 4. Basic Usage:
 
 ```python
-from refine_client import Refine
+from orcli import Refine
 
 # Initialize the client
 refine = Refine(base_url="http://127.0.0.1:3333")
@@ -115,7 +115,7 @@ refine.apply_operations_from_file("operations.json", project_id, wait=True)
 ### Example 1: Data Pipeline
 
 ```python
-from refine_client import Refine
+from orcli import Refine
 
 refine = Refine(verbose=True)
 
@@ -141,7 +141,7 @@ refine.delete_project(project_id)
 
 ```python
 import os
-from refine_client import Refine
+from orcli import Refine
 
 refine = Refine()
 
