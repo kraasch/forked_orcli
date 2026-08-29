@@ -6,7 +6,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "refine-client"
 version = "0.1.0"
-description = "..."
+description = "A Python client for interacting with OpenRefine"
+readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "requests>=2.28.0",
