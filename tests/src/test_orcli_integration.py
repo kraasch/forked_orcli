@@ -17,7 +17,7 @@ def test_create_project(tmp_path):
         encoding="utf-8",
     )
     # Timestamped OpenRefine project name.
-    project_name = f"pytest_refine-client-integration_{timestamp}"
+    project_name = f"pytest_orcli-integration_{timestamp}"
     refine = Refine()
     try:
         project_id = refine.create_project(

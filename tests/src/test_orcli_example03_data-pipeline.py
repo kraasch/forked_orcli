@@ -35,7 +35,7 @@ class TestExample03DataPipeline(unittest.TestCase):
             output_file = tmp_path / f"processed_data_{timestamp}.csv"
 
             project_name = (
-                f"pytest_refine-client-integration_example03_{timestamp}"
+                f"pytest_orcli-integration_example03_{timestamp}"
             )
 
             refine = Refine(verbose=True)

@@ -30,8 +30,8 @@ Requires Python 3.10+ and a running OpenRefine server instance.
 Clone the repository (see below).
 
 ```bash
-git clone https://github.com/rkraasch/refine-client.git
-cd refine-client
+git clone https://github.com/rkraasch/orcli.git
+cd orcli
 ```
 
 Or download from [orcli from PyPI](https://pypi.org/project/orcli/) (see below).
@@ -51,7 +51,7 @@ python -m venv ./venv
 python -m pytest tests/ -v
 ```
 This creates temporary test projects in OpenRefine which should be cleaned up automatically.
-If a project prefixed `pytest_refine-client-integration_` remains visible in the Open project tab (under [#open-project](http://127.0.0.1:3333/#open-project)), something went wrong.
+If a project prefixed `pytest_orcli_` remains visible in the Open project tab (under [#open-project](http://127.0.0.1:3333/#open-project)), something went wrong.
 
 3. Basic usage:
 
@@ -241,7 +241,7 @@ refine = Refine(base_url="http://example.com:3333")
 
 ## Support and Contribute
 
-Open an issue on the project's [issues tab](https://github.com/rkraasch/refine-client/issues) on Github.
+Open an issue on the project's [issues tab](https://github.com/rkraasch/orcli/issues) on Github.
 
 Or contribute via Github:
 
