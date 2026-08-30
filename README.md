@@ -85,7 +85,11 @@ refine.delete_project(project_id)
 
 ## Examples
 
+The example projects can be found in [./examples/](./examples/).
+
 ### Example 1: Access Project Metadata
+
+See files at [./examples/01_access-project-metadata/](./examples/01_access-project-metadata/).
 
 ```python
 # Set metadata
@@ -100,58 +104,83 @@ for pid, metadata in projects.items():
 project_id = refine.get_project_id_by_name("Project Name")
 ```
 
-### Example 2: Do Batch Operations
+### Example 2: Batch Operations
+
+Apply multiple operations directly or load them from a JSON file.
+
+See files at [./examples/02_batch-operations](./examples/02_batch-operations).
 
 ```python
-# Apply multiple operations
 operations = [
     {"op": "core/column-removal", "columnName": "col1"},
     {"op": "core/column-removal", "columnName": "col2"}
 ]
-refine.apply_operations(operations, project_id)
 
-# Load from file
-refine.apply_operations_from_file("operations.json", project_id, wait=True)
+refine.apply_operations(operations, project_id, wait=True)
+
+refine.apply_operations_from_file(
+    "operations.json",
+    project_id,
+    wait=True,
+)
 ```
 
 ### Example 3: Data Pipeline
 
+Create a project, transform its data, export the result and clean up.
+
+See files at [./examples/03_data-pipeline](./examples/03_data-pipeline).
+
 ```python
-from orcli import Refine
-
-refine = Refine(verbose=True)
-
-# Create project
-project_id = refine.create_project("raw_data.csv", "Processing")
-
 # Transform data
 operations = [
-    {"op": "core/column-removal", "columnName": "temp_field"},
-    {"op": "core/text-transform", "columnName": "email",
-     "expression": "value.toLowerCase()"}
+    {
+        "op": "core/column-removal",
+        "columnName": "temp_field",
+    },
+    {
+        "op": "core/text-transform",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based",
+        },
+        "columnName": "email",
+        "expression": "value.toLowercase()",
+        "onError": "keep-original",
+        "repeat": False,
+        "repeatCount": 10,
+    },
 ]
+
 refine.apply_operations(operations, project_id, wait=True)
-
-# Export
-refine.export_data("processed_data.csv", fmt="csv", project_id=project_id)
-
-# Cleanup
-refine.delete_project(project_id)
 ```
 
 ### Example 4: Batch Processing
 
+Process every CSV file in a directory using the same operations file.
+
+See files at [./examples/04_batch-processing](./examples/04_batch-processing).
+
 ```python
-import os
-from orcli import Refine
-
-refine = Refine()
-
 for filename in os.listdir("input_dir/"):
     if filename.endswith(".csv"):
-        project_id = refine.create_project(f"input_dir/{filename}", filename)
-        refine.apply_operations_from_file("operations.json", project_id, wait=True)
-        refine.export_data(f"output_dir/{filename}", fmt="csv", project_id=project_id)
+        project_id = refine.create_project(
+            f"input_dir/{filename}",
+            filename,
+        )
+
+        refine.apply_operations_from_file(
+            "operations.json",
+            project_id,
+            wait=True,
+        )
+
+        refine.export_data(
+            f"output_dir/{filename}",
+            fmt="csv",
+            project_id=project_id,
+        )
+
         refine.delete_project(project_id)
 ```
 
