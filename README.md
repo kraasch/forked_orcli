@@ -89,6 +89,8 @@ The example projects can be found in [./examples/](./examples/).
 
 ### Example 1: Access Project Metadata
 
+Demonstrates how to access and modify OpenRefine project metadata.
+
 See files at [./examples/01_access-project-metadata/](./examples/01_access-project-metadata/).
 
 ```python
@@ -182,6 +184,48 @@ for filename in os.listdir("input_dir/"):
         )
 
         refine.delete_project(project_id)
+```
+
+### Example 5: Logging
+
+Configure the Python logger to control the output produced by orcli at different log levels.
+
+See files at [./examples/05_logging/](./examples/05_logging/).
+
+```python
+import logging
+
+from orcli import Refine
+
+logger = logging.getLogger("orcli.client")
+
+handler = logging.StreamHandler()
+handler.setFormatter(
+    logging.Formatter("%(levelname)s: %(message)s")
+)
+
+logger.addHandler(handler)
+logger.propagate = False
+
+# DEBUG: show all diagnostic messages.
+logger.setLevel(logging.DEBUG)
+
+refine = Refine()
+
+# Use Refine as usual.
+project_id = refine.create_project(
+    project_file="input.csv",
+    project_name="Logging Example",
+)
+
+# INFO: suppress DEBUG messages.
+logger.setLevel(logging.INFO)
+
+# WARNING: suppress DEBUG and INFO messages.
+logger.setLevel(logging.WARNING)
+
+# ERROR: only show errors and critical messages.
+logger.setLevel(logging.ERROR)
 ```
 
 ## API Reference
