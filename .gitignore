@@ -2,6 +2,7 @@
 # for this specific project:
 response.html
 tests/test_output/
+temp_output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
