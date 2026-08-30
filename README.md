@@ -13,8 +13,8 @@ Find the [orcli package](https://pypi.org/project/orcli/) on PyPI.
   - Retrieve and manage project metadata.
   - Apply OpenRefine operations individually or in batches.
   - Load operations from JSON files.
-  - Export data in multiple formats (TSV, CSV, JSON).
-  - Retrieve column information and project models, convert and manipulate row data.
+  - Export project data using OpenRefine's supported export formats (TSV, CSV, JSON).
+  - Retrieve column information and project models and convert row data to Python lists.
   - Error handling with detailed response logging.
 
 ## Installation
@@ -88,6 +88,8 @@ refine.delete_project(project_id)
 The example projects can be found in [./examples/](./examples/).
 
 ### Example 1: Access Project Metadata
+
+Demonstrates how to access and modify OpenRefine project metadata.
 
 See files at [./examples/01_access-project-metadata/](./examples/01_access-project-metadata/).
 
@@ -184,18 +186,58 @@ for filename in os.listdir("input_dir/"):
         refine.delete_project(project_id)
 ```
 
+### Example 5: Logging
+
+Configure the Python logger to control the output produced by `orcli` at different log levels.
+
+See files at [./examples/05_logging/](./examples/05_logging/).
+
+```python
+import logging
+
+from orcli import Refine
+
+logger = logging.getLogger("orcli.client")
+
+handler = logging.StreamHandler()
+handler.setFormatter(
+    logging.Formatter("%(levelname)s: %(message)s")
+)
+
+logger.addHandler(handler)
+logger.propagate = False
+
+# DEBUG: show all diagnostic messages.
+logger.setLevel(logging.DEBUG)
+
+refine = Refine()
+
+# Use Refine as usual.
+project_id = refine.create_project(
+    project_file="input.csv",
+    project_name="Logging Example",
+)
+
+# INFO: suppress DEBUG messages.
+logger.setLevel(logging.INFO)
+
+# WARNING: suppress DEBUG and INFO messages.
+logger.setLevel(logging.WARNING)
+
+# ERROR: only show errors and critical messages.
+logger.setLevel(logging.ERROR)
+```
+
 ## API Reference
 
 ### Initialization
 
 ```python
-Refine(base_url=None, verbose=False, silent=False)
+Refine(base_url=None)
 ```
 
 Parameters:
 - base_url: OpenRefine server URL (default: http://127.0.0.1:3333)
-- verbose: Enable verbose logging
-- silent: Suppress logging
 
 ### Methods
 
@@ -217,17 +259,14 @@ Parameters:
 
 ## Configuration
 
-Logging:
+### Logging
 
-```python
-# Verbose mode
-refine = Refine(verbose=True)
+`orcli` uses Python's standard `logging` module. The library does not configure
+logging output itself, allowing applications to decide which log messages to display.
 
-# Silent mode
-refine = Refine(silent=True)
-```
+See [Example 5: Logging](#example-5-logging) for a code example.
 
-Custom server:
+### Custom server
 
 ```python
 refine = Refine(base_url="http://example.com:3333")

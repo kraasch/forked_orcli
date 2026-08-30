@@ -13,13 +13,11 @@ logger.addHandler(logging.NullHandler())
 class Refine:
     """Client interface for interacting with an OpenRefine server through its REST API."""
     DEFAULT_BASE_URL = "http://127.0.0.1:3333"
-    def __init__(self, base_url: str | None = None, verbose: bool = False, silent: bool = False) -> None:
+    def __init__(self, base_url: str | None = None) -> None:
         self.base_url: str = (base_url or self.DEFAULT_BASE_URL).rstrip("/")
         self.session = requests.Session()
         self.csrf_token: str = ""
         self.project_id: str | None = None
-        self.silent: bool = silent
-        self.verbose: bool = verbose
         try:
             response = self.session.get(f"{self.base_url}")
             response.raise_for_status()
@@ -106,9 +104,8 @@ class Refine:
             data=payload,
         )
         if response.status_code == 200:
-            if self.verbose:
-                desc = operation.get("description", "Unnamed operation")
-                logger.info(f"Applied operation: {desc}")
+            desc = operation.get("description", "Unnamed operation")
+            logger.info(f"Applied operation: {desc}")
         else:
             self._save_error_response(response, "Operation failed.")
             raise RuntimeError(f"Operation failed: {response.status_code}")
@@ -212,8 +209,7 @@ class Refine:
         }
         response = self.session.post(f'{self.base_url}/command/core/set-project-metadata', data=data)
         if response.status_code == 200:
-            if self.verbose:
-                logger.info(f"Project metadata '{field_name}' updated to '{value}'.")
+            logger.info(f"Project metadata '{field_name}' updated to '{value}'.")
         else:
             self._save_error_response(response, "Failed to update project metadata")
             raise Exception(f"Failed to update project metadata: {response.status_code}")
@@ -242,5 +238,5 @@ class Refine:
             return []
 
 if __name__ == "__main__":
-    refine = Refine(verbose=True)
+    refine = Refine()
 
