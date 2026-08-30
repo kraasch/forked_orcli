@@ -28,7 +28,7 @@ class TestExample01AccessProjectMetadata(unittest.TestCase):
             )
             # Create unique project names.
             original_project_name = (
-                f"pytest_refine-client-integration_{timestamp}"
+                f"pytest_orcli-integration_{timestamp}"
             )
             updated_project_name = (
                 f"Project Name Test Example 01_{timestamp}"

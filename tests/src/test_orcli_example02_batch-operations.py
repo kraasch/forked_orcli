@@ -51,7 +51,7 @@ class TestExample02BatchOperations(unittest.TestCase):
             )
 
             project_name = (
-                f"pytest_refine-client-integration_example02_{timestamp}"
+                f"pytest_orcli-integration_example02_{timestamp}"
             )
 
             refine = Refine()
@@ -90,7 +90,7 @@ class TestExample02BatchOperations(unittest.TestCase):
                 # Create a second project for testing operations loaded
                 # from a file.
                 second_project_name = (
-                    f"pytest_refine-client-integration_example02_file_{timestamp}"
+                    f"pytest_orcli-integration_example02_file_{timestamp}"
                 )
 
                 second_project_id = refine.create_project(
