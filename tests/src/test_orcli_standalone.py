@@ -34,8 +34,6 @@ class TestRefineInitialization(unittest.TestCase):
         refine = Refine()
         self.assertEqual(refine.base_url, "http://127.0.0.1:3333")
         self.assertIsNone(refine.project_id)
-        self.assertFalse(refine.silent)
-        self.assertFalse(refine.verbose)
 
     @patch('orcli.client.requests.Session')
     def test_init_custom_url(self, mock_session_class):
@@ -70,31 +68,6 @@ class TestRefineInitialization(unittest.TestCase):
 
         with self.assertRaises(ConnectionError):
             Refine()
-
-    @patch('orcli.client.requests.Session')
-    def test_init_verbose_mode(self, mock_session_class):
-        """Test initialization with verbose mode."""
-        mock_session = Mock()
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_session.get.return_value = mock_response
-        mock_session_class.return_value = mock_session
-
-        refine = Refine(verbose=True)
-        self.assertTrue(refine.verbose)
-
-    @patch('orcli.client.requests.Session')
-    def test_init_silent_mode(self, mock_session_class):
-        """Test initialization with silent mode."""
-        mock_session = Mock()
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_session.get.return_value = mock_response
-        mock_session_class.return_value = mock_session
-
-        refine = Refine(silent=True)
-        self.assertTrue(refine.silent)
-
 
 class TestRefineCSRFToken(unittest.TestCase):
     """Test cases for CSRF token handling."""
@@ -311,7 +284,7 @@ class TestRefineOperations(unittest.TestCase):
         mock_session.get.return_value = init_response
         mock_session_class.return_value = mock_session
 
-        refine = Refine(verbose=True)
+        refine = Refine()
         refine.project_id = "test_project"
         refine.csrf_token = "test_token"
 
@@ -501,7 +474,6 @@ class TestRefineExport(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             refine.export_data("output.tsv", "tsv")
 
-
 class TestRefineModelsAndColumns(unittest.TestCase):
     """Test cases for getting models and column information."""
 
@@ -517,7 +489,6 @@ class TestRefineModelsAndColumns(unittest.TestCase):
         refine = Refine()
         refine.project_id = "test_project"
         refine.csrf_token = "test_token"
-
         mock_data = {
             "columnModel": {
                 "columns": [
@@ -526,7 +497,6 @@ class TestRefineModelsAndColumns(unittest.TestCase):
                 ]
             }
         }
-
         models_response = Mock()
         models_response.status_code = 200
         models_response.json.return_value = mock_data
@@ -557,7 +527,6 @@ class TestRefineModelsAndColumns(unittest.TestCase):
                 ]
             }
         }
-
         names_response = Mock()
         names_response.status_code = 200
         names_response.json.return_value = mock_data
@@ -565,7 +534,6 @@ class TestRefineModelsAndColumns(unittest.TestCase):
 
         result = refine.get_column_names()
         self.assertEqual(result, ["col1", "col2", "col3"])
-
 
 class TestRefineProjectDeletion(unittest.TestCase):
     """Test cases for project deletion."""
@@ -611,7 +579,6 @@ class TestRefineProjectDeletion(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             refine.delete_project()
 
-
 class TestRefineProjectMetadata(unittest.TestCase):
     """Test cases for project metadata operations."""
 
@@ -625,19 +592,16 @@ class TestRefineProjectMetadata(unittest.TestCase):
         mock_session_class.return_value = mock_session
 
         refine = Refine()
-
         mock_data = {
             "projects": {
                 "1234": {"name": "Project 1", "modified": "2025-01-01"},
                 "5678": {"name": "Project 2", "modified": "2025-01-02"}
             }
         }
-
         metadata_response = Mock()
         metadata_response.status_code = 200
         metadata_response.json.return_value = mock_data
         refine.session.get.return_value = metadata_response
-
         result = refine.get_all_projects_metadata()
         self.assertEqual(len(result), 2)
         self.assertIn("1234", result)
@@ -652,7 +616,6 @@ class TestRefineProjectMetadata(unittest.TestCase):
         mock_session_class.return_value = mock_session
 
         refine = Refine()
-
         mock_data = {
             "projects": {
                 "1234": {"name": "Test Project", "modified": "2025-01-01"},
@@ -665,7 +628,6 @@ class TestRefineProjectMetadata(unittest.TestCase):
         metadata_response.json.return_value = mock_data
         # This get call is used for the initial connection in __init__ and for get_project_id_by_name
         refine.session.get.return_value = metadata_response
-
         result = refine.get_project_id_by_name("Test Project")
         self.assertEqual(result, "1234")
 
@@ -689,7 +651,6 @@ class TestRefineProjectMetadata(unittest.TestCase):
         refine.set_project_metadata("name", "New Name")
         refine.session.post.assert_called_once()
 
-
 class TestRefineRowsAsList(unittest.TestCase):
     """Test cases for rows_as_list utility method."""
 
@@ -703,14 +664,12 @@ class TestRefineRowsAsList(unittest.TestCase):
         mock_session_class.return_value = mock_session
 
         refine = Refine()
-
         data = {
             "rows": [
                 {"cells": [{"v": "val1"}, {"v": "val2"}]},
                 {"cells": [{"v": "val3"}, {"v": "val4"}]}
             ]
         }
-
         result = refine.rows_as_list(data)
         self.assertEqual(result, [["val1", "val2"], ["val3", "val4"]])
 
@@ -731,7 +690,6 @@ class TestRefineRowsAsList(unittest.TestCase):
                 {"cells": [{}, {"v": "val2"}]}
             ]
         }
-
         result = refine.rows_as_list(data)
         self.assertEqual(result, [["val1", None], [None, "val2"]])
 
@@ -745,7 +703,6 @@ class TestRefineRowsAsList(unittest.TestCase):
         mock_session_class.return_value = mock_session
 
         refine = Refine()
-
         data = {"rows": []}
         result = refine.rows_as_list(data)
         self.assertEqual(result, [])

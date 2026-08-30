@@ -38,7 +38,7 @@ class TestExample03DataPipeline(unittest.TestCase):
                 f"pytest_orcli-integration_example03_{timestamp}"
             )
 
-            refine = Refine(verbose=True)
+            refine = Refine()
 
             try:
                 # Create project.
